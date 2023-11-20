@@ -1,0 +1,31 @@
+{% extends "Technical-analysis.html" %}
+
+ 
+{% block content %}
+<main class="main-container">
+<section class="Technical-data">
+    <div class="Technical-data-list">
+      <h1>Bank: {{ bank }}</h1>
+      <table class="table">
+        <thead>
+            <tr>
+                {% for column in df.columns %}
+                    <th>{{ column }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in df.values %}
+                <tr>
+                    {% for cell in row %}
+                        <td>{{ cell }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    </div>
+</section>
+</main>
+
+{% endblock %}

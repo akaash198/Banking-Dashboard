@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+
+{% load static %}
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home</title>
+    <link rel="stylesheet" href="{% static 'css/Home.css' %}" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="cards">
+      <label id="summary">
+        <input type="checkbox" />
+        <article>
+          <div class="front">
+            <header>
+              <h2>Technical Analysis</h2>
+            </header>
+            <div class="image-container">
+                <img src="{% static 'assets/Technical-analysis.jpg' %}" alt="business-analysis" />
+            </div>
+          </div>
+          <div class="back">
+            <span>"Uncover valuable insights in financial markets through technical analysis – a data-driven method for error code and failure analysis."</span>
+            <p>For More Info</p>
+            <a class="link-tag" href="{% url 'Technical-analysis' %}" ><button class="button">Insights</button></a>
+          </div>
+        </article>
+      </label>
+      <label id="overdue">
+        <input type="checkbox" />
+        <article>
+          <div class="front">
+            <header>
+              <h2>Business Analysis</h2>
+            </header>
+            <div class="image-container">
+            <img src="{% static 'assets/business-analysis.jpg' %}" alt="business-analysis" />
+            </div>
+          </div>
+          <div class="back">
+            <span>"Unlocking Banking Insights: Harnessing Google Play Reviews for Precise Business Analysis in the Financial Sector."</span>
+            <p>For More Info</p>
+            <a class="link-tag" href="{% url 'Business-analysis' %}" ><button class="button">Insights</button></a>
+          </div>
+        </article>
+      </label>
+      
+    </div>
+  </body>
+</html>

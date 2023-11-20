@@ -1,0 +1,184 @@
+<!---Log-in-->
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign-in Page</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+      
+        .section-class {
+            background-image: url("{% static 'assets/bg.png' %}");
+            background-repeat: no-repeat;
+            background-size: cover;
+            backdrop-filter: blur(13px);
+            height: 100vh;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .Signup-box {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 400px;
+            padding: 40px;
+            margin: 20px auto;
+            transform: translate(-50%, -55%);
+            background: transparent;
+            border: 1px solid #fff;
+            backdrop-filter: blur(13px);
+            box-sizing: border-box;
+            box-shadow: 0 15px 25px rgba(0, 0, 0, .6);
+            border-radius: 10px;
+        }
+
+        .Signup-box p:first-child {
+            margin: 0 0 30px;
+            padding: 0;
+            color: #fff;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .Signup-box .user-box {
+            position: relative;
+        }
+
+        .Signup-box .user-box input {
+            width: 100%;
+            padding: 10px 0;
+            font-size: 16px;
+            color: #fff;
+            margin-bottom: 30px;
+            border: none;
+            border-bottom: 1px solid #fff;
+            outline: none;
+            background: transparent;
+        }
+
+        .Signup-box .user-box label {
+            position: absolute;
+            top: 0;
+            left: 0;
+            padding: 10px 0;
+            font-size: 16px;
+            color: #fff;
+            pointer-events: none;
+            transition: .5s;
+        }
+
+        .Signup-box .user-box input:focus~label,
+        .Signup-box .user-box input:valid~label {
+            top: -20px;
+            left: 0;
+            color: #fff;
+            font-size: 12px;
+        }
+
+        .Signup-box form a {
+            position: relative;
+            display: inline-block;
+            padding: 10px 20px;
+            font-weight: bold;
+            color: #fff;
+            font-size: 16px;
+            text-decoration: none;
+            text-transform: uppercase;
+            overflow: hidden;
+            transition: .5s;
+            margin-top: 40px;
+            letter-spacing: 3px
+        }
+
+        .Signup-box a:hover {
+            transform: scale(1.1);
+        }
+        .submit-button button{
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #0561EE;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            outline: 2px solid #0561EE;
+            cursor: pointer;
+            transition: outline-offset .25s;
+        }
+        
+
+       
+        .submit-button button:hover,
+        .submit-button button:focus {
+            outline-offset: 2px;
+        }
+        .submit-button button:hover {
+            outline-offset: 3px;
+        }
+        .account-creation {
+            text-align: center;
+            color: #fff;
+            font-size: 1rem;
+            margin-top: 1rem;
+        }
+        .account-creation a {
+            color: #132083;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+
+      
+
+        
+    </style>
+</head>
+
+<body>
+
+    <section class="section-class">
+        <div class="Signup-box">
+            <p>Signup</p>
+            <form method="post" action="">
+                {% csrf_token %}
+                <div class="user-box">
+                    {{ form.username }}
+                    <label>Username</label>
+                </div>
+                <div class="user-box">
+                    {{ form.email }}
+                    <label>Email</label>
+                </div>
+                <div class="user-box">
+                    {{ form.password1 }}
+                    <label>Password</label>
+                </div>
+                <div class="user-box">
+                    {{ form.password2 }}
+                    <label>Confirm Password</label>
+                </div>
+                <div class="submit-button">
+                    <button type="submit">Sign Up</button>
+                </div>
+            </form>
+            {{ form.errors}}
+
+            
+
+            <p class="account-creation">Already have an account? <a href="{% url 'LoginPage' %}">Log in</a></p>
+        
+        </div>
+        
+    </section>
+
+
+</body>
+</html>

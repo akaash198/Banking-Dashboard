@@ -1,0 +1,673 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="{% static 'css/Technical-analysis.css' %}" />
+
+
+	<title>Data Analysis</title>
+    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+
+</head>
+<body>
+	
+	<!-- SIDEBAR -->
+	<section id="sidebar">
+		{% if bank %}
+        <img class="logo" src="{{ bank.logo.url }}" alt="{{ bank.name }} "> 
+    	{% else %}
+        <p>No bank selected</p>
+    	{% endif %}
+		<ul class="side-menu">
+			
+			<li>
+				<a href="#"><i class='bx bxs-chart icon nav-icons' ></i> Insights </a>
+			</li>
+			<li><a href="#"><i class='bx bxs-report icon nav-icons' ></i> Reports</a></li>
+		 
+			<li><a href="#"><i class='bx bx-data icon nav-icons' ></i> DataBase</a></li>
+			 
+		</ul>
+		
+	</section>
+	<!-- SIDEBAR -->
+
+	<!-- NAVBAR -->
+	<section id="content">
+		<!-- NAVBAR -->
+		<nav>
+			<i class='bx bx-menu toggle-sidebar nav-icons' ></i>
+			 <form method="POST">
+				{% csrf_token %}
+				<div class="form-group">
+					<div class="date-picker-container">
+						<div class="date-picker">
+							<label for="start-date">Start Date:</label>
+							<input type="date" id="start_date" name="start_date" required>
+						</div>
+						<div class="date-picker">
+							<label for="end-date">End Date:</label>
+							<input type="date" id="end_date" name="end_date" required>
+						</div>
+						<div >
+							<button class="submit-button" type="submit">Submit</button>
+						</div>   
+					</div>     
+				</div>
+                
+			</form> 
+			 
+			<span class="divider"></span>
+			<div class="profile">
+                <i class='bx bxs-user icon nav-icons' ></i>
+				<ul class="profile-link">
+					<li><a href="#"><i class='bx bxs-user-circle icon' ></i> Profile</a></li>
+					<li><a href="{% url 'Logout' %}"><i class='bx bxs-log-out-circle' ></i> Logout</a></li>
+				</ul>
+			</div>
+		</nav>
+		<!-- NAVBAR -->
+
+		<!-- MAIN -->
+		<main>
+			<h1 class="title">Dashboard</h1>
+			<ul class="breadcrumbs">
+				<li><a href="#">Home</a></li>
+				<li class="divider">/</li>
+				<li><a href="#" class="active">Dashboard</a></li>
+			</ul>
+			<div class="info-data">
+				 {% for stat in transaction %} 
+             <div class="card">
+                    <div class="icon-container">
+						<img class="image-data" src="{% static 'assets/' %}{{ stat.icon }}" alt="Transaction" />
+
+                     </div>
+                    <div class="data-container">
+                        <div class="text-value">{{ stat.title }}</div>
+                        <div class="data-value">{{ stat.value }}</div>
+                        <div class="comaparesion-data">compare to yesterday <i class='bx bx-trending-up icon' ></i></div>
+                    </div>
+				</div>
+                {% endfor %} 
+				 
+			</div>
+			<div class="data">
+                <div class="content-data">
+                    <div class="tabs-nav">
+                        <div class="btn btn-active" onclick="showChart(1)">Hourly</div>
+                        <div class="btn" onclick="showChart(2)">Weekly</div>
+                    </div>
+                    <div class="head">
+                        <h3>Trend View</h3>
+                    </div>
+                    <div class="chart" id="chart1">
+                        <div id="chart"></div>
+                    </div>
+                    <div class="chart" id="chart2">
+                        <div id="chart_weekly"></div>
+
+                    </div>
+                </div>
+				<div class="content-data">
+						<div class="tab-table">
+							<button class="tablinks" onclick="openTab(event, 'TechnicalErrorTab')">Technical Error</button>
+							<button class="tablinks" onclick="openTab(event, 'BusinessErrorTab')">Business Error</button>
+						</div>
+						
+						<div class="tabcontent" id="TechnicalErrorTab">
+							{% for table_data_item in Table_data %}
+								{% if table_data_item.title == 'Top Technical Responses' %}
+									<h3>{{ table_data_item.title }}</h3>
+									<table>
+										<tr>
+											<th>Response</th>
+											<th>Count</th>
+										</tr>
+										{% for response, count in table_data_item.data.items %}
+											<tr>
+												<td>{{ response }}</td>
+												<td>{{ count }}</td>
+											</tr>
+										{% endfor %}
+									</table>
+								{% endif %}
+							{% endfor %}
+						</div>
+						
+						<div class="tabcontent" id="BusinessErrorTab">
+							{% for table_data_item in Table_data %}
+								{% if table_data_item.title == 'Top Business Responses' %}
+									<h3>{{ table_data_item.title }}</h3>
+									<table>
+										<tr>
+											<th>Response</th>
+											<th>Count</th>
+										</tr>
+										{% for response, count in table_data_item.data.items %}
+											<tr>
+												<td>{{ response }}</td>
+												<td>{{ count }}</td>
+											</tr>
+										{% endfor %}
+									</table>
+								{% endif %}
+							{% endfor %}
+						</div>
+						
+						
+						 
+				</div>
+					 
+					 
+				</div>
+				
+			<div class="heatmap-container">
+				<div class="tabs-heatmap">
+					<div class="tab-heatmap active" id="business-tab">Business</div>
+					<div class="tab-heatmap" id="technical-tab">Technical</div>
+				</div>
+			
+				<div id="chart-container">
+					<!-- Business Chart -->
+					<div id="business-chart-container" style="display: block;">
+						<div id="business-chart-div"></div>
+					</div>
+			
+					<!-- Technical Chart (Initially hidden) -->
+					<div id="technical-chart-container" style="display: none;">
+						<div id="technical-chart-div"></div>
+					</div>
+				</div>
+			</div>
+		</main>
+		<!-- MAIN -->
+	</section>
+	<!-- NAVBAR -->
+
+	<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+	<script>
+        // SIDEBAR DROPDOWN
+const allDropdown = document.querySelectorAll('#sidebar .side-dropdown');
+const sidebar = document.getElementById('sidebar');
+
+allDropdown.forEach(item=> {
+	const a = item.parentElement.querySelector('a:first-child');
+	a.addEventListener('click', function (e) {
+		e.preventDefault();
+
+		if(!this.classList.contains('active')) {
+			allDropdown.forEach(i=> {
+				const aLink = i.parentElement.querySelector('a:first-child');
+
+				aLink.classList.remove('active');
+				i.classList.remove('show');
+			})
+		}
+
+		this.classList.toggle('active');
+		item.classList.toggle('show');
+	})
+})
+
+
+
+
+
+// SIDEBAR COLLAPSE
+const toggleSidebar = document.querySelector('nav .toggle-sidebar');
+const allSideDivider = document.querySelectorAll('#sidebar .divider');
+
+if(sidebar.classList.contains('hide')) {
+	allSideDivider.forEach(item=> {
+		item.textContent = '-'
+	})
+	allDropdown.forEach(item=> {
+		const a = item.parentElement.querySelector('a:first-child');
+		a.classList.remove('active');
+		item.classList.remove('show');
+	})
+} else {
+	allSideDivider.forEach(item=> {
+		item.textContent = item.dataset.text;
+	})
+}
+
+toggleSidebar.addEventListener('click', function () {
+	sidebar.classList.toggle('hide');
+
+	if(sidebar.classList.contains('hide')) {
+		allSideDivider.forEach(item=> {
+			item.textContent = '-'
+		})
+
+		allDropdown.forEach(item=> {
+			const a = item.parentElement.querySelector('a:first-child');
+			a.classList.remove('active');
+			item.classList.remove('show');
+		})
+	} else {
+		allSideDivider.forEach(item=> {
+			item.textContent = item.dataset.text;
+		})
+	}
+})
+
+
+
+
+sidebar.addEventListener('mouseleave', function () {
+	if(this.classList.contains('hide')) {
+		allDropdown.forEach(item=> {
+			const a = item.parentElement.querySelector('a:first-child');
+			a.classList.remove('active');
+			item.classList.remove('show');
+		})
+		allSideDivider.forEach(item=> {
+			item.textContent = '-'
+		})
+	}
+})
+
+
+
+sidebar.addEventListener('mouseenter', function () {
+	if(this.classList.contains('hide')) {
+		allDropdown.forEach(item=> {
+			const a = item.parentElement.querySelector('a:first-child');
+			a.classList.remove('active');
+			item.classList.remove('show');
+		})
+		allSideDivider.forEach(item=> {
+			item.textContent = item.dataset.text;
+		})
+	}
+})
+
+
+
+
+// PROFILE DROPDOWN
+const profile = document.querySelector('nav .profile');
+const imgProfile = profile.querySelector('i');
+const dropdownProfile = profile.querySelector('.profile-link');
+
+imgProfile.addEventListener('click', function () {
+	dropdownProfile.classList.toggle('show');
+})
+
+
+
+
+// MENU
+const allMenu = document.querySelectorAll('main .content-data .head .menu');
+
+allMenu.forEach(item=> {
+	const icon = item.querySelector('.icon');
+	const menuLink = item.querySelector('.menu-link');
+
+	icon.addEventListener('click', function () {
+		menuLink.classList.toggle('show');
+	})
+})
+
+
+
+window.addEventListener('click', function (e) {
+	if(e.target !== imgProfile) {
+		if(e.target !== dropdownProfile) {
+			if(dropdownProfile.classList.contains('show')) {
+				dropdownProfile.classList.remove('show');
+			}
+		}
+	}
+
+	allMenu.forEach(item=> {
+		const icon = item.querySelector('.icon');
+		const menuLink = item.querySelector('.menu-link');
+
+		if(e.target !== icon) {
+			if(e.target !== menuLink) {
+				if (menuLink.classList.contains('show')) {
+					menuLink.classList.remove('show')
+				}
+			}
+		}
+	})
+})
+
+
+
+
+
+
+
+
+
+//CHART
+function showChart(tabNumber) {
+            // Hide all charts
+            const charts = document.querySelectorAll('.chart');
+            charts.forEach(chart => {
+                chart.classList.remove('active');
+            });
+
+            // Show the selected chart
+            const selectedChart = document.getElementById(`chart${tabNumber}`);
+            if (selectedChart) {
+                selectedChart.classList.add('active');
+            }
+        }
+
+        // Initially show the first tab
+        showChart(1);
+
+var chartData = {{ chart_data|safe }};
+// Convert data values to millions
+chartData.chart_data = chartData.chart_data.map(function(value) {
+    const valueInMillions = (value / 1000000).toFixed(2); // Divide by 1,000,000 and round to 2 decimal places
+    return valueInMillions + "M";
+});
+
+
+var BusinessHourlData = {{ business_chart_data|safe }};
+BusinessHourlData.business_chart_data = BusinessHourlData.business_chart_data.map(function(value) {
+    const valueInMillions = (value / 1000000).toFixed(2); // Divide by 1,000,000 and round to 2 decimal places
+    return valueInMillions + "M";
+});
+
+// APEXCHART
+var options = {
+  series: [{
+  name: 'TD',
+  data: chartData.chart_data
+},{
+    name: 'BD',
+    data: BusinessHourlData.business_chart_data
+  }],
+  chart: {
+  height: 350,
+  type: 'area'
+},
+dataLabels: {
+  enabled: false
+},
+stroke: {
+  curve: 'smooth'
+},
+xaxis: {
+  type: 'hours',
+  categories: chartData.labels
+},
+tooltip: {
+  x: {
+    format: 'dd/MM/yy HH:mm'
+  },
+},
+};
+
+var chart = new ApexCharts(document.querySelector("#chart"), options);
+
+chart.render();
+
+
+//chart2 
+
+var weekChart = {{ week_chart_data|safe }};
+
+// Convert data values to millions
+weekChart.week_chart_data = weekChart.week_chart_data.map(function(value) {
+    const valueInMillions = (value / 1000).toFixed(2); // Divide by 1,000,000 and round to 2 decimal places
+    return valueInMillions + "K";
+});
+
+var BusinessDay = {{ business_week_chart_data|safe }};
+
+// Convert data values to millions
+BusinessDay.business_week_chart_data = BusinessDay.business_week_chart_data.map(function(value) {
+    const valueInMillions = (value / 1000).toFixed(2); // Divide by 1,000,000 and round to 2 decimal places
+    return valueInMillions + "K";
+});
+
+
+var options = {
+    series: [{
+    name: 'TD',
+    data: weekChart.week_chart_data,
+  },{
+      name: 'BD',
+      data: BusinessDay.business_week_chart_data
+    }],
+    chart: {
+    height: 350,
+    type: 'area'
+  },
+  dataLabels: {
+    enabled: false
+  },
+  stroke: {
+    curve: 'smooth'
+  },
+  xaxis: {
+    type: 'hours',
+    categories: weekChart.week_labels,
+  },
+  tooltip: {
+    x: {
+      format: 'dd/MM/yy HH:mm'
+    },
+  },
+  };
+  
+  var chart_1 = new ApexCharts(document.querySelector("#chart_weekly"), options);
+  
+  chart_1.render();
+
+
+  var heat_map_data_td = {{ technical_heatmap_data|safe }};
+  var heat_map_data_bd = {{ business_heatmap_data|safe }};
+
+  console.log(heat_map_data_td);
+
+  
+
+// Define a function to format numbers with abbreviations
+function formatNumberWithAbbreviation(num) {
+	if (num >= 100000) {
+	  return (num / 100000).toFixed(1) + 'l'; // For values in lakhs
+	} else if (num >= 1000) {
+	  return (num / 1000).toFixed(1) + 'k'; // For values in thousands
+	} else {
+	  return num.toString(); // Leave smaller numbers as is
+	}
+  }
+  
+  // Assuming heat_map_data_td.data contains your data series
+  var formattedData = heat_map_data_td.data.map(function (entry) {
+	var formattedDataRow = entry.data.map(function (value) {
+	  return formatNumberWithAbbreviation(value);
+	});
+	return {
+	  name: entry.name,
+	  data: formattedDataRow
+	};
+  });
+
+
+  var formattedDataBD = heat_map_data_bd.data.map(function (entry) {
+	var formattedDataRow = entry.data.map(function (value) {
+	  return formatNumberWithAbbreviation(value);
+	});
+	return {
+	  name: entry.name,
+	  data: formattedDataRow
+	};
+  });
+
+  console.log(formattedDataBD);
+  
+
+
+
+
+
+var businessOptions = {
+	chart: {
+		height: 350,
+		type: "heatmap"
+	},
+	colors: [
+		// "#5A9BD5",
+		// "#5A9BD5",
+		// "#5A9BD5",
+		// "#5A9BD5",
+		// "#ffffff",
+		"#F8C045",
+		"#F8C045",
+		"#F8C045",
+		"#F8C045"
+	],
+	plotOptions: {
+		heatmap: {
+			shadeIntensity: 1
+		}
+	},
+	dataLabels: {
+		enabled: true,
+		style: {
+			colors: ["#000"]
+		}
+	},
+ 
+	series: formattedData,
+	xaxis: {
+		type: "category",
+		categories: heat_map_data_td.labels,
+		
+	},
+	yaxis: {
+		labels: {
+			show: true
+		},
+		categories: ["Date 1", "Date 2", "Date 3", "Date 4", "Date 5", "Date 6", "Date 7"]
+	},
+	tooltip: {
+		enabled: false
+	}
+};
+
+var technicalOptions = {
+	chart: {
+		height: 350,
+		type: "heatmap"
+	},
+	colors: [
+		"#5A9BD5",
+		"#5A9BD5",
+		"#5A9BD5",
+		"#5A9BD5"
+		// "#ffffff",
+		// "#F8C045",
+		// "#F8C045",
+		// "#F8C045",
+		// "#F8C045"
+	],
+	plotOptions: {
+		heatmap: {
+			shadeIntensity: 1
+		}
+	},
+	dataLabels: {
+		enabled: true,
+		style: {
+			colors: ["#000"]
+		}
+	},
+	 
+	series: formattedDataBD,
+
+	xaxis: {
+		type: "category",
+		categories:  heat_map_data_bd.labels
+	},
+	yaxis: {
+		labels: {
+			show: true
+		},
+		categories: ["Date 1", "Date 2", "Date 3", "Date 4", "Date 5", "Date 6", "Date 7"]
+	},
+	tooltip: {
+		enabled: false
+	}
+
+
+};
+
+
+
+var businessChart = new ApexCharts(document.querySelector("#business-chart-div"), businessOptions);
+var technicalChart = new ApexCharts(document.querySelector("#technical-chart-div"), technicalOptions);
+
+businessChart.render();
+
+// Tab switching logic
+const businessTab = document.getElementById("business-tab");
+const technicalTab = document.getElementById("technical-tab");
+const businessChartDiv = document.getElementById("business-chart-container");
+const technicalChartDiv = document.getElementById("technical-chart-container");
+
+businessTab.addEventListener("click", function () {
+	businessTab.classList.add("active");
+	technicalTab.classList.remove("active");
+	businessChartDiv.style.display = "block";
+	technicalChartDiv.style.display = "none";
+});
+
+technicalTab.addEventListener("click", function () {
+	technicalTab.classList.add("active");
+	businessTab.classList.remove("active");
+	businessChartDiv.style.display = "none";
+	technicalChartDiv.style.display = "block";
+	// Render the technical chart when the tab is clicked for the first time
+	if (!technicalChart.rendered) {
+		technicalChart.render();
+		technicalChart.rendered = true;
+	}
+});
+
+// Initially show the business tab and chart
+businessTab.click();
+
+
+
+
+function openTab(evt, tabName) {
+    var i, tabcontent, tablinks;
+
+    // Get all elements with class "tabcontent" and hide them
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+    }
+
+    // Get all elements with class "tablinks" and remove the "active" class
+    tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].classList.remove("active");
+    }
+
+    // Show the current tab and add an "active" class to the button that opened the tab
+    document.getElementById(tabName).style.display = "block";
+    evt.currentTarget.classList.add("active");
+}
+
+// Initially, display the first tab (Technical Error)
+document.getElementById('TechnicalErrorTab').style.display = 'block';
+document.querySelector('.tablinks').classList.add('active');
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- ... (previous head content) -->
+</head>
+<body>
+    <div class="tabs">
+        <div class="tab" onclick="showTab('technical')">Technical</div>
+        <div class="tab" onclick="showTab('business')">Business</div>
+    </div>
+
+    <div class="tab-content" id="technical">
+        <table>
+            <tr>
+                <th>DATE</th>
+                {% for hour in result.x_axis_hour %}
+                    <th>{{ hour }}</th>
+                {% endfor %}
+                <th>TOTAL</th>
+            </tr>
+            {% for date in result.y_axis_date %}
+                <tr>
+                    <td>{{ date }}</td>
+                    {% for hour in result.x_axis_hour %}
+                        <td>{{ result.technical_declines_data|default:{}|get:date|default:{}|get:hour|default:0 }}</td>
+                    {% endfor %}
+                    <td>{{ result.technical_declines_data|default:{}|get:date|default:{}|dictsum }}</td>
+                </tr>
+            {% endfor %}
+            <tr>
+                <td>TOTAL</td>
+                {% for hour in result.x_axis_hour %}
+                    <td>{{ result.technical_declines_data|default:{}|dictsum:hour }}</td>
+                {% endfor %}
+                <td>{{ result.technical_declines_data|default:{}|dictsum }}</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="tab-content" id="business">
+        <table>
+            <tr>
+                <th>DATE</th>
+                {% for hour in result.x_axis_hour %}
+                    <th>{{ hour }}</th>
+                {% endfor %}
+                <th>TOTAL</th>
+            </tr>
+            {% for date in result.y_axis_date %}
+                <tr>
+                    <td>{{ date }}</td>
+                    {% for hour in result.x_axis_hour %}
+                        <td>{{ result.business_declines_data|default:{}|get:date|default:{}|get:hour|default:0 }}</td>
+                    {% endfor %}
+                    <td>{{ result.business_declines_data|default:{}|get:date|default:{}|dictsum }}</td>
+                </tr>
+            {% endfor %}
+            <tr>
+                <td>TOTAL</td>
+                {% for hour in result.x_axis_hour %}
+                    <td>{{ result.business_declines_data|default:{}|dictsum:hour }}</td>
+                {% endfor %}
+                <td>{{ result.business_declines_data|default:{}|dictsum }}</td>
+            </tr>
+        </table>
+    </div>
+
+    <script>
+        function showTab(tabName) {
+            const tabs = document.getElementsByClassName('tab-content');
+            for (let i = 0; i < tabs.length; i++) {
+                tabs[i].style.display = 'none';
+            }
+            document.getElementById(tabName).style.display = 'block';
+        }
+        showTab('technical');  // Show Technical tab by default
+    </script>
+</body>
+</html>

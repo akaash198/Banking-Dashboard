@@ -1,0 +1,284 @@
+<!---Log-in-->
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log-in Page</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+      
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-image: url("{% static 'assets/bg.png' %}");
+            background-repeat: no-repeat;
+            background-size: cover;
+            backdrop-filter: blur(1px);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-box {
+            background: transparent;
+            border: 1px solid #fff;
+            backdrop-filter: blur(13px);
+            box-shadow: 0 15px 25px rgba(0, 0, 0, .6);
+            border-radius: 10px;
+            width: 100%;
+            max-width: 400px;
+            padding: 40px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+        .login-box p:first-child {
+            margin-bottom: 30px;
+            color: #fff;
+            font-size: 1.5rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .user-box {
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        .user-box input {
+            width: 100%;
+            padding: 10px 0;
+            font-size: 16px;
+            color: #fff;
+            border: none;
+            border-bottom: 1px solid #fff;
+            outline: none;
+            background: transparent;
+        }
+
+        .user-box label {
+            position: absolute;
+            top: 0;
+            left: 0;
+            padding: 10px 0;
+            font-size: 16px;
+            color: #fff;
+            pointer-events: none;
+            transition: .5s;
+        }
+
+        .user-box input:focus~label,
+        .user-box input:valid~label {
+            top: -20px;
+            left: 0;
+            font-size: 12px;
+        }
+
+        .submit-button {
+            margin-top: 40px;
+        }
+
+        .submit-button button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #0561EE;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            outline: 2px solid #0561EE;
+            cursor: pointer;
+            transition: outline-offset .25s;
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        .submit-button button:hover,
+        .submit-button button:focus {
+            outline-offset: 2px;
+        }
+
+        .account-creation {
+            margin-top: 1rem;
+            color: #fff;
+            font-size: 1rem;
+        }
+
+        .account-creation a {
+            color: #132083;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .message {
+            margin-top: 1rem;
+            color: #fff;
+            font-size: 1rem;
+        }
+
+        @media (max-width: 576px) {
+            .login-box {
+                padding: 20px;
+            }
+
+            .login-box p:first-child {
+                margin-bottom: 20px;
+                font-size: 1.2rem;
+            }
+
+            .user-box input {
+                font-size: 14px;
+            }
+
+            .user-box label {
+                font-size: 14px;
+            }
+
+            .submit-button button {
+                font-size: 14px;
+            }
+
+            .account-creation {
+                font-size: 0.8rem;
+            }
+
+            .message {
+                font-size: 0.8rem;
+            }
+        }
+
+
+        @media (max-width: 768px) {
+            .login-box {
+                padding: 30px;
+            }
+
+            .login-box p:first-child {
+                margin-bottom: 30px;
+                font-size: 1.3rem;
+            }
+
+            .user-box input {
+                font-size: 15px;
+            }
+
+            .user-box label {
+                font-size: 15px;
+            }
+
+            .submit-button button {
+                font-size: 15px;
+            }
+
+            .account-creation {
+                font-size: 0.9rem;
+            }
+
+            .message {
+                font-size: 0.9rem;
+            }
+        }
+
+
+        @media (max-width: 992px) {
+            .login-box {
+                padding: 35px;
+            }
+
+            .login-box p:first-child {
+                margin-bottom: 35px;
+                font-size: 1.4rem;
+            }
+
+            .user-box input {
+                font-size: 16px;
+            }
+
+            .user-box label {
+                font-size: 16px;
+            }
+
+            .submit-button button {
+                font-size: 16px;
+            }
+
+            .account-creation {
+                font-size: 1rem;
+            }
+
+            .message {
+                font-size: 1rem;
+            }
+        }
+
+
+        @media (max-width: 1200px) {
+            .login-box {
+                padding: 40px;
+            }
+
+            .login-box p:first-child {
+                margin-bottom: 40px;
+                font-size: 1.5rem;
+            }
+
+            .user-box input {
+                font-size: 17px;
+            }
+
+            .user-box label {
+                font-size: 17px;
+            }
+
+            .submit-button button {
+                font-size: 17px;
+            }
+
+            .account-creation {
+                font-size: 1.1rem;
+            }
+
+            .message {
+                font-size: 1.1rem;
+            }
+        }
+
+        
+    </style>
+</head>
+
+<body>
+    <div class="login-box">
+        <p>Login</p>
+        <form method="post">
+            {% csrf_token %}
+            <div class="user-box">
+                <input required="true" name="username" type="text">
+                <label>Username</label>
+            </div>
+            <div class="user-box">
+                <input required="true" name="password" type="password">
+                <label>Password</label>
+            </div>
+            <div class="submit-button">
+                <button>Log In</button>
+            </div>
+        </form>
+        {% if messages %}
+            {% for message in messages %}
+                <p class="message">{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+        <p class="account-creation">Don't have an account? <a href="{% url 'SignupPage' %}">Sign up</a></p><br>
+    </div>
+</body>
+
+</html>
